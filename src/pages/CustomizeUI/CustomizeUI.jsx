@@ -21,7 +21,7 @@ import vazoImage from "../../components/images/vazo.png";
 import styles from "./CustomizeUI.module.scss";
 
 const cx = classNames.bind(styles);
-const API_BASE_URL = " https://n8n.vazo.vn/api";
+const API_BASE_URL = " https://n8n.vazo.vn";
 
 const presetColors = ["#1976d2", "#d32f2f", "#7b1fa2", "#03A84E"];
 const defaultConfig = {
@@ -31,7 +31,7 @@ const defaultConfig = {
   welcomeMessage: "Xin chào! Tôi là trợ lý AI. Tôi có thể giúp gì cho bạn?",
   position: "bottom-right",
   historyEnabled: "true",
-  serverUrl: " https://n8n.vazo.vn/api",
+  serverUrl: " https://n8n.vazo.vn",
   webhookUrl: "https://wf.mkt04.vawayai.com/webhook/ai-assistant",
   avatar: "",
 };
@@ -60,7 +60,7 @@ export default function ChatWidgetSetupUI() {
         setLoading(true);
         // Lấy config_id
         const configResponse = await axios.get(
-          `${API_BASE_URL}/get-selected-config`,
+          `${API_BASE_URL}/api/get-selected-config`,
           { withCredentials: true }
         );
         let id = configResponse.data.config_id;
@@ -73,7 +73,7 @@ export default function ChatWidgetSetupUI() {
 
         // Lấy cấu hình chi tiết
         const configDetailResponse = await axios.get(
-          `${API_BASE_URL}/get-config-by-id?id_config=${id}`,
+          `${API_BASE_URL}/api/get-config-by-id?id_config=${id}`,
           { withCredentials: true }
         );
         if (configDetailResponse.data) {
@@ -166,7 +166,7 @@ export default function ChatWidgetSetupUI() {
       }
 
       const response = await axios.post(
-        `${API_BASE_URL}/save-config`,
+        `${API_BASE_URL}/api/save-config`,
         formData,
         {
           withCredentials: true,

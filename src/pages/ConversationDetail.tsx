@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { mockConversations } from "@/data/mockData";
 import axios from "axios";
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 interface Message {
   sessionId: string;
@@ -25,7 +25,7 @@ const getIdConfig = (): string | null => {
 
 const fetchConversationDetail = async (sessionId: string, idConfig: string): Promise<Message[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/get-history-admin`, {
+    const response = await axios.get(`${API_BASE_URL}/api/get-history-admin`, {
       params: {
         id_config: idConfig,
         search: sessionId,

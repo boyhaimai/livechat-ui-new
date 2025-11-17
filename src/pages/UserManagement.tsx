@@ -63,7 +63,7 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 export interface AdminUserAccount {
   id: string;
@@ -100,7 +100,7 @@ const fetchAdminData = async (
   searchTerm: string = ""
 ): Promise<AdminDataResponse> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/admin/admin-info`, {
+    const response = await axios.get(`${API_BASE_URL}/api/admin/admin-info`, {
       params: { page, limit, search: searchTerm },
       withCredentials: true,
     });
@@ -143,7 +143,7 @@ const fetchAdminData = async (
 
 const setRole = async (id: string, role: "admin" | "user"): Promise<string> => {
   const res = await axios.post(
-    `${API_BASE_URL}/api/admin/set-role`,
+    `${API_BASE_URL}/api/api/admin/set-role`,
     { id, role },
     { withCredentials: true }
   );
@@ -151,14 +151,14 @@ const setRole = async (id: string, role: "admin" | "user"): Promise<string> => {
 };
 
 const deleteAccount = async (id: string): Promise<void> => {
-  await axios.delete(`${API_BASE_URL}/api/admin/delete-account/${id}`, {
+  await axios.delete(`${API_BASE_URL}/api/api/admin/delete-account/${id}`, {
     withCredentials: true,
   });
 };
 
 const extendExpire = async (id: string, label: string): Promise<string> => {
   const res = await axios.post(
-    `${API_BASE_URL}/api/admin/extend-expire`,
+    `${API_BASE_URL}/api/api/admin/extend-expire`,
     { id, label },
     { withCredentials: true }
   );
@@ -168,7 +168,7 @@ const extendExpire = async (id: string, label: string): Promise<string> => {
 // --- THAY THẾ: gửi boolean giống Admin.js ---
 const setBan = async (id: string, is_ban: boolean): Promise<string> => {
   const res = await axios.post(
-    `${API_BASE_URL}/api/admin/set-ban`,
+    `${API_BASE_URL}/api/api/admin/set-ban`,
     { id, is_ban }, // gửi boolean trực tiếp
     { withCredentials: true }
   );
@@ -649,13 +649,13 @@ export default function UserManagement() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
-                          <Button
+                          {/* <Button
                             variant="outline"
                             size="icon"
                             onClick={() => handleEditUser(user)}
                           >
                             <Edit className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                           <Button
                             variant="outline"
                             size="icon"

@@ -18,7 +18,7 @@ import classNames from "classnames/bind";
 
 const cx = classNames.bind(styles);
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 function AddWeb() {
   const [website, setWebsite] = useState("");
@@ -31,7 +31,7 @@ function AddWeb() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await axios.get(`${API_BASE_URL}/get-admin-info`, {
+        await axios.get(`${API_BASE_URL}/api/get-admin-info`, {
           withCredentials: true,
         });
       } catch (err) {
@@ -58,7 +58,7 @@ function AddWeb() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/add-website`,
+        `${API_BASE_URL}/api/add-website`,
         { websiteUrl: formattedUrl, name: websiteName },
         { withCredentials: true }
       );

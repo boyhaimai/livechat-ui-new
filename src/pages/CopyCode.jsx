@@ -15,7 +15,7 @@ import vazoImage from "../components/images/vazo.png";
 
 const cx = classNames.bind(styles);
 
-const API_BASE_URL = " https://n8n.vazo.vn/api";
+const API_BASE_URL = " https://n8n.vazo.vn";
 
 export default function CopyCode() {
   const [isHovered, setIsHovered] = useState(false);
@@ -29,14 +29,14 @@ export default function CopyCode() {
     const fetchConfigId = async () => {
       try {
         const response = await axios.get(
-          `${API_BASE_URL}/get-selected-config`,
+          `${API_BASE_URL}/api/get-selected-config`,
           {
             withCredentials: true,
           }
         );
         if (response.data.success && response.data.config_id) {
           const configId = response.data.config_id;
-          const script = `<script src="https://cdn.jsdelivr.net/gh/boyhaimai/model_admin_just_chat_v19@main/dist/model_admin_just_chat.js" data-server-url=" https://n8n.vazo.vn/api" data-id-config="${configId}" defer></script>`;
+          const script = `<script src="https://cdn.jsdelivr.net/gh/boyhaimai/model_admin_just_chat_v19@main/dist/model_admin_just_chat.js" data-server-url=" https://n8n.vazo.vn" data-id-config="${configId}" defer></script>`;
           setScriptCode(script);
         } else {
           setError("Không tìm thấy cấu hình. Vui lòng chọn website.");

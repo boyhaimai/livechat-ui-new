@@ -37,7 +37,7 @@ const positionOptions = [
 ];
 
 // Giả lập API_BASE_URL và axios
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 // Định nghĩa cấu trúc state cho thông tin tài khoản
 const initialAccountState = {
@@ -105,7 +105,7 @@ export default function Settings() {
 
   const fetchAdminInfo = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/get-admin-info`, {
+      const response = await axios.get(`${API_BASE_URL}/api/get-admin-info`, {
         withCredentials: true,
       });
       if (response.data.success) {
@@ -129,7 +129,7 @@ export default function Settings() {
       const storedConfigId = getSelectedConfigId();
       if (!storedConfigId) {
         // Fallback: lấy danh sách websites, dùng cái đầu tiên nếu có
-        const websitesRes = await axios.get(`${API_BASE_URL}/get-websites`, {
+        const websitesRes = await axios.get(`${API_BASE_URL}/api/get-websites`, {
           withCredentials: true,
         });
 
@@ -139,7 +139,7 @@ export default function Settings() {
           localStorage.setItem("selectedConfigId", first.config_id);
           // use that id
           const cfgRes = await axios.get(
-            `${API_BASE_URL}/get-config-by-id?id_config=${encodeURIComponent(
+            `${API_BASE_URL}/api/get-config-by-id?id_config=${encodeURIComponent(
               first.config_id
             )}`
           );
@@ -152,7 +152,7 @@ export default function Settings() {
 
       // Call real API with real id_config
       const response = await axios.get(
-        `${API_BASE_URL}/get-config-by-id?id_config=${encodeURIComponent(
+        `${API_BASE_URL}/api/get-config-by-id?id_config=${encodeURIComponent(
           storedConfigId
         )}`,
         { withCredentials: true }
@@ -211,7 +211,7 @@ export default function Settings() {
       formData.append("avatar", config.avatar || "");
 
       const response = await axios.post(
-        `${API_BASE_URL}/save-config`,
+        `${API_BASE_URL}/api/save-config`,
         formData,
         {
           withCredentials: true,
@@ -506,7 +506,7 @@ export default function Settings() {
                 <Input
                   id="serverUrl"
                   name="serverUrl"
-                  placeholder="https://n8n.vazo.vn/api"
+                  placeholder="https://n8n.vazo.vn"
                   value={config.serverUrl}
                   onChange={handleChange}
                 />

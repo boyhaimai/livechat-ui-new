@@ -14,7 +14,7 @@ import {
 import { Star } from "lucide-react";
 import axios from "axios";
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 // Định nghĩa kiểu dữ liệu cho tin nhắn thô từ API
 interface RawMessage {
@@ -47,7 +47,7 @@ const getIdConfig = (): string | null => {
 // Hàm gọi API lấy lịch sử tin nhắn
 const fetchHistory = async (idConfig: string): Promise<RawMessage[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/get-history-admin`, {
+    const response = await axios.get(`${API_BASE_URL}/api/get-history-admin`, {
       params: {
         id_config: idConfig,
         limit: 1000, // Lấy đủ tin nhắn để nhóm
@@ -217,7 +217,7 @@ export default function Conversations() {
     try {
       // Gọi API đánh dấu tất cả tin nhắn trong session là đã đọc
       await axios.post(
-        `${API_BASE_URL}/mark-messages-read`,
+        `${API_BASE_URL}/api/mark-messages-read`,
         { sessionId },
         { withCredentials: true }
       );

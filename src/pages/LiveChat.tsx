@@ -37,7 +37,7 @@ const useTokenExpiration = () => ({
   },
 });
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 export default function LiveChat() {
   const { toast } = useToast();
@@ -53,7 +53,7 @@ export default function LiveChat() {
   const fetchActiveChats = async () => {
     setIsLoadingChats(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/get-active-chats`, {
+      const response = await fetch(`${API_BASE_URL}/api/get-active-chats`, {
         credentials: "include",
       });
       if (!response.ok) {
@@ -87,7 +87,7 @@ export default function LiveChat() {
     try {
       const [chatId, domain] = chat.chatId.split("@");
       const response = await fetch(
-        `${API_BASE_URL}/get-history?userId=${chatId}&domain=${encodeURIComponent(
+        `${API_BASE_URL}/api/get-history?userId=${chatId}&domain=${encodeURIComponent(
           domain
         )}`,
         { credentials: "include" }
@@ -123,7 +123,7 @@ export default function LiveChat() {
       // Logic của fetchActiveChats
       setIsLoadingChats(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/get-active-chats`, {
+        const response = await fetch(`${API_BASE_URL}/api/get-active-chats`, {
           credentials: "include",
         });
         if (!response.ok) {
@@ -165,7 +165,7 @@ export default function LiveChat() {
         try {
           const [chatId, domain] = selectedChat.chatId.split("@");
           const response = await fetch(
-            `${API_BASE_URL}/get-history?userId=${chatId}&domain=${encodeURIComponent(
+            `${API_BASE_URL}/api/get-history?userId=${chatId}&domain=${encodeURIComponent(
               domain
             )}`,
             { credentials: "include" }
@@ -243,7 +243,7 @@ export default function LiveChat() {
     try {
       const [chatId, domain] = selectedChat.chatId.split("@");
       const response = await fetch(
-        `${API_BASE_URL}/send-message-to-user`,
+        `${API_BASE_URL}/api/send-message-to-user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

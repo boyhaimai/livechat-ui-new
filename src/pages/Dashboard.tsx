@@ -30,11 +30,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -46,12 +41,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
-const API_BASE_URL = "https://n8n.vazo.vn/api"; // Thay đổi URL cơ sở API nếu cần
+const API_BASE_URL = "https://n8n.vazo.vn"; // Thay đổi URL cơ sở API nếu cần
 
 // Hàm chuyển đổi dữ liệu dailyVisitors sang định dạng biểu đồ
 const transformChartData = (dailyVisitors) => {
@@ -75,8 +69,24 @@ export default function Dashboard() {
   const [newWebsite, setNewWebsite] = useState({ name: "", domain: "" });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [websiteToDelete, setWebsiteToDelete] = useState(null);
-  const { toast } = useToast();
-  const navigator = useNavigate();
+  // const { toast } = useToast(); // Đã chuyển lên trên để dùng chung
+  const { toast } = useToast();	  const navigate = useNavigate();
+  // Hàm xử lý lỗi hết token
+  const handleTokenExpired = (error) => {
+    if (error.response && error.response.status === 401) {
+      toast({
+        title: "Phiên làm việc hết hạn",
+        description: "Token đã hết hạn. Vui lòng đăng nhập lại.",
+        variant: "destructive",
+      });
+      // Xóa token hoặc thông tin đăng nhập khỏi localStorage/sessionStorage nếu có
+      localStorage.removeItem("selectedConfigId"); // Ví dụ: xóa configId đã lưu
+      // Chuyển hướng về trang đăng nhập
+      navigate("/login"); // Giả sử trang đăng nhập là /login
+      return true; // Đã xử lý lỗi
+    }
+    return false; // Chưa xử lý lỗi
+  };
 
   const selectedWebsite = useMemo(() => {
     if (!selectedConfigId || !websites) return null;
@@ -85,7 +95,7 @@ export default function Dashboard() {
 
   const fetchWebsites = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/get-websites`, {
+      const response = await axios.get(`${API_BASE_URL}/api/get-websites`, {
         withCredentials: true,
       });
 
@@ -115,6 +125,9 @@ export default function Dashboard() {
         setLoading(false);
       }
     } catch (err) {
+      if (handleTokenExpired(err)) {
+        return;
+      }
       console.error("Lỗi tải website:", err);
       setError("Lỗi kết nối server khi tải website.");
       setLoading(false);
@@ -126,7 +139,7 @@ export default function Dashboard() {
     setError(null);
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/get-stats?config_id=${configId}`,
+        `${API_BASE_URL}/api/get-stats?config_id=${configId}`,
         {
           withCredentials: true,
         }
@@ -140,6 +153,9 @@ export default function Dashboard() {
         setError("Không thể tải dữ liệu thống kê.");
       }
     } catch (err) {
+      if (handleTokenExpired(err)) {
+        return;
+      }
       console.error("Lỗi tải thống kê:", err);
       setError("Lỗi kết nối server khi tải thống kê.");
     } finally {
@@ -162,7 +178,7 @@ export default function Dashboard() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/delete-website`,
+        `${API_BASE_URL}/api/delete-website`,
         { websiteId: websiteToDelete.id }, // API backend yêu cầu websiteId
         { withCredentials: true }
       );
@@ -182,6 +198,9 @@ export default function Dashboard() {
         });
       }
     } catch (err) {
+      if (handleTokenExpired(err)) {
+        return;
+      }
       console.error("Lỗi xóa website:", err);
       toast({
         title: "Lỗi kết nối",
@@ -282,8 +301,8 @@ export default function Dashboard() {
   if (!selectedWebsite) {
     return (
       <div className="p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-        <p>Vui lòng thêm website mới để bắt đầu thống kê.</p>
-        <Button onClick={() => navigator("/add-web")} className="mt-2">
+	        <p>Vui lòng thêm website mới để bắt đầu thống kê.</p>
+	        <Button onClick={() => navigate("/add-web")} className="mt-2">
           <Plus className="h-4 w-4 mr-2" /> Thêm website
         </Button>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -356,13 +375,13 @@ export default function Dashboard() {
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator("/add-web")}
+            `  <DropdownMenuItem
+               onClick={() => navigate("/add-web")}
                 className="text-primary"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Thêm website
-              </DropdownMenuItem>
+              </DropdownMenuItem>`
             </DropdownMenuContent>
           </DropdownMenu>
 

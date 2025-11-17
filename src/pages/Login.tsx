@@ -52,7 +52,7 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const API_BASE_URL = "https://n8n.vazo.vn/api"; // Cần thay đổi thành URL API thực tế
+  const API_BASE_URL = "https://n8n.vazo.vn"; // Cần thay đổi thành URL API thực tế
 
   // Hàm mã hóa/giải mã đơn giản (Base64) để đáp ứng yêu cầu "mã hóa pass"
   const encodeBase64 = (str: string) => btoa(str);
@@ -62,7 +62,7 @@ export default function Login() {
     // ✅ Kiểm tra login bằng COOKIE (đăng nhập thật)
     const checkCookieLogin = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/get-admin-info`, {
+        const res = await axios.get(`${API_BASE_URL}/api/get-admin-info`, {
           withCredentials: true,
         });
 
@@ -118,7 +118,7 @@ export default function Login() {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/login-admin`,
+        `${API_BASE_URL}/api/login-admin`,
         { phoneNumber, password },
         { withCredentials: true }
       );
@@ -188,7 +188,7 @@ export default function Login() {
     try {
       // Gửi ID Token đến backend để xác thực và đăng nhập
       const response = await axios.post(
-        `${API_BASE_URL}/login-google`, // Giả định endpoint cho Google Login
+        `${API_BASE_URL}/api/login-google`, // Giả định endpoint cho Google Login
         { idToken },
         { withCredentials: true }
       );

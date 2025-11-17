@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import axios from "axios";
 
-const API_BASE_URL = "https://n8n.vazo.vn/api";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -38,7 +38,7 @@ export default function ChangePassword() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/change-password`,
+        `${API_BASE_URL}/api/change-password`,
         {
           currentPassword,
           newPassword,

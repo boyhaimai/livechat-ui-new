@@ -2,10 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 // Giả định API_BASE_URL được định nghĩa ở đâu đó, nếu không có, cần thêm vào.
-// Ví dụ: const API_BASE_URL = "https://n8n.vazo.vn/api";
+// Ví dụ: const API_BASE_URL = "https://n8n.vazo.vn";
 // Nếu API_BASE_URL được import từ một file config, hãy import nó.
 // Hiện tại, tôi sẽ sử dụng một biến giả định.
-const API_BASE_URL = "https://n8n.vazo.vn/api"; // Cần thay thế bằng URL thực tế của bạn
+const API_BASE_URL = "https://n8n.vazo.vn"; // Cần thay thế bằng URL thực tế của bạn
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,7 +67,7 @@ export default function Register() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/register-admin`, // Sử dụng endpoint từ Register_admin.js
+        `${API_BASE_URL}/api/register-admin`, // Sử dụng endpoint từ Register_admin.js
         {
           name: name,
           phoneNumber: phoneNumber, // Sử dụng phoneNumber thay vì email
