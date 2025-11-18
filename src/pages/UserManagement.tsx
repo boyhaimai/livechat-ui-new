@@ -151,7 +151,7 @@ const setRole = async (id: string, role: "admin" | "user"): Promise<string> => {
 };
 
 const deleteAccount = async (id: string): Promise<void> => {
-  await axios.delete(`${API_BASE_URL}/api/api/admin/delete-account/${id}`, {
+  await axios.delete(`${API_BASE_URL}/api/admin/delete-account/${id}`, {
     withCredentials: true,
   });
 };

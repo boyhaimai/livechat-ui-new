@@ -17,6 +17,7 @@ interface Chat {
   avatar: string;
   lastActivity: number;
   isBotActive: boolean;
+  isUserActive: boolean; // Thêm trường này để hiển thị trạng thái hoạt động của khách hàng
 }
 
 interface Message {
@@ -48,6 +49,7 @@ export default function LiveChat() {
   const [message, setMessage] = useState("");
   const [isLoadingChats, setIsLoadingChats] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  
 
   // 1. Lấy danh sách active chats
   const fetchActiveChats = async () => {
@@ -116,6 +118,51 @@ export default function LiveChat() {
       setIsLoadingMessages(false);
     }
   };
+
+  // Hàm để chuyển đổi trạng thái bot cho một chat cụm thể
+  const toggleBotStatus = async (chatId: string, domain: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/toggle-bot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chatId: `${chatId}@${domain}`,
+          enableBot : !currentStatus,
+        }),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.success) {
+        // Cập nhật trạng thái trong state
+        setActiveChats((prevChats) =>
+          prevChats.map((chat) =>
+            chat.chatId === `${chatId}@${domain}`
+              ? { ...chat, isBotActive: !currentStatus }
+              : chat
+          )
+        );
+        toast({
+          title: "Thành công",
+          description: `Đã ${!currentStatus ? "bật" : "tắt"} bot cho cuộc trò chuyện.`,
+        });
+      } else {
+        throw new Error(data.message || "Không thể chuyển đổi trạng thái bot.");
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Lỗi không xác định";
+      console.error("Lỗi khi chuyển đổi trạng thái bot:", err);
+      toast({
+        title: "Lỗi",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
+
 
   // Effect để tự động tải danh sách chats
   useEffect(() => {
@@ -308,8 +355,28 @@ export default function LiveChat() {
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <span className="font-medium">{chat.name}</span>
+                  <div className="flex items-center">
+                    <span className="font-medium">{chat.name}</span>
+                    {/* Icon trạng thái hoạt động của User (giả định) */}
+                    {chat.isUserActive && (
+                      <span className="ml-2 h-2 w-2 rounded-full bg-green-500 block" title="Khách hàng đang hoạt động"></span>
+                    )}
+                  </div>
                   {/* TODO: Thêm logic đếm tin nhắn chưa đọc nếu có */}
+                  {/* Nút bật tắt bot cho từng chat */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Ngăn chặn việc chọn chat
+                      const [chatId, domain] = chat.chatId.split("@");
+                      toggleBotStatus(chatId, domain, chat.isBotActive);
+                    }}
+                    className="h-6 w-6"
+                    title={chat.isBotActive ? "Tắt Bot cho chat này" : "Bật Bot cho chat này"}
+                  >
+                    <Bot className={`h-4 w-4 ${chat.isBotActive ? "text-green-500" : "text-red-500"}`} />
+                  </Button>
                   {/* {conv.unreadCount > 0 && (
                     <Badge variant="destructive" className="ml-2">
                       {conv.unreadCount}
@@ -332,13 +399,19 @@ export default function LiveChat() {
 
         <Card className="lg:col-span-2 flex flex-col">
           <CardHeader>
-            <CardTitle>
-              {selectedChat
-                ? selectedChat.name
-                : "Chọn cuộc trò chuyện"}
+            <CardTitle className="flex justify-between items-center">
+              {selectedChat ? (
+                <div className="flex items-center">
+                  <span className="text-lg font-semibold">{selectedChat.name}</span>
+                  {/* Icon trạng thái hoạt động của Admin (giả định luôn hoạt động khi đang xem chat) */}
+                  <span className="ml-2 h-2 w-2 rounded-full bg-green-500 block" title="Admin đang hoạt động"></span>
+                </div>
+              ) : (
+                "Chọn cuộc trò chuyện"
+              )}
               {isLoadingMessages && <Loader2 className="ml-2 h-4 w-4 animate-spin inline" />}
             </CardTitle>
-          </CardHeader>
+            </CardHeader>
           <CardContent className="flex-1 flex flex-col p-0">
             {selectedChat ? (
               <>

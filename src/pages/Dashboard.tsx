@@ -28,9 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -70,7 +68,8 @@ export default function Dashboard() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [websiteToDelete, setWebsiteToDelete] = useState(null);
   // const { toast } = useToast(); // Đã chuyển lên trên để dùng chung
-  const { toast } = useToast();	  const navigate = useNavigate();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   // Hàm xử lý lỗi hết token
   const handleTokenExpired = (error) => {
     if (error.response && error.response.status === 401) {
@@ -289,11 +288,19 @@ export default function Dashboard() {
     );
   }
 
-  if (error) {
+  if (websites.length === 0) {
     return (
-      <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        <p className="font-bold">Lỗi:</p>
-        <p>{error}</p>
+      <div className="p-4 bg-orange-100 border border-orange-400 text-orange-700 rounded">
+        <p className="font-semibold">Chưa có website nào.</p>
+        <p>Vui lòng thêm website để tiếp tục sử dụng hệ thống.</p>
+
+        <Button
+          onClick={() => navigate("/add-web")}
+          className="mt-4 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Thêm website
+        </Button>
       </div>
     );
   }
@@ -301,8 +308,8 @@ export default function Dashboard() {
   if (!selectedWebsite) {
     return (
       <div className="p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-	        <p>Vui lòng thêm website mới để bắt đầu thống kê.</p>
-	        <Button onClick={() => navigate("/add-web")} className="mt-2">
+        <p>Vui lòng thêm website mới để bắt đầu thống kê.</p>
+        <Button onClick={() => navigate("/add-web")} className="mt-2">
           <Plus className="h-4 w-4 mr-2" /> Thêm website
         </Button>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -374,14 +381,15 @@ export default function Dashboard() {
                   </div>
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator />
-            `  <DropdownMenuItem
-               onClick={() => navigate("/add-web")}
+              <DropdownMenuSeparator />`{" "}
+              <DropdownMenuItem
+                onClick={() => navigate("/add-web")}
                 className="text-primary"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Thêm website
-              </DropdownMenuItem>`
+              </DropdownMenuItem>
+              `
             </DropdownMenuContent>
           </DropdownMenu>
 

@@ -61,7 +61,7 @@ export function AppSidebar() {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "https://n8n.vazo.vn/logout",
+        "https://n8n.vazo.vn/api/logout",
         {},
         { withCredentials: true }
       );

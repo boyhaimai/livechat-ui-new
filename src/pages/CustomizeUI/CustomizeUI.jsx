@@ -21,7 +21,7 @@ import vazoImage from "../../components/images/vazo.png";
 import styles from "./CustomizeUI.module.scss";
 
 const cx = classNames.bind(styles);
-const API_BASE_URL = " https://n8n.vazo.vn";
+const API_BASE_URL = "https://n8n.vazo.vn";
 
 const presetColors = ["#1976d2", "#d32f2f", "#7b1fa2", "#03A84E"];
 const defaultConfig = {
@@ -31,7 +31,7 @@ const defaultConfig = {
   welcomeMessage: "Xin chào! Tôi là trợ lý AI. Tôi có thể giúp gì cho bạn?",
   position: "bottom-right",
   historyEnabled: "true",
-  serverUrl: " https://n8n.vazo.vn",
+  serverUrl: "https://n8n.vazo.vn/api",
   webhookUrl: "https://wf.mkt04.vawayai.com/webhook/ai-assistant",
   avatar: "",
 };
