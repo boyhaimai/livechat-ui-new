@@ -17,7 +17,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useState, useEffect, useMemo } from "react";
-import { Check, Globe, Plus, Trash2 } from "lucide-react";
+import { Check, Globe, Plus, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import {
@@ -28,7 +28,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Dialog } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,6 +75,9 @@ export default function Dashboard() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWebsite, setNewWebsite] = useState({ name: "", domain: "" });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // State cho dialog sửa
+  const [websiteToEdit, setWebsiteToEdit] = useState(null); // Website đang được sửa
+  const [editedWebsite, setEditedWebsite] = useState({ name: "", domain: "" }); // Dữ liệu đang sửa
   const [websiteToDelete, setWebsiteToDelete] = useState(null);
   // const { toast } = useToast(); // Đã chuyển lên trên để dùng chung
   const { toast } = useToast();
@@ -170,6 +182,66 @@ export default function Dashboard() {
     localStorage.setItem("selectedConfigId", website.config_id);
     setSelectedConfigId(website.config_id);
     fetchStats(website.config_id);
+  };
+
+  const handleEditClick = (website) => {
+    setWebsiteToEdit(website);
+    setEditedWebsite({
+      name: website.name_website || "",
+      domain: website.domain || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditWebsite = async () => {
+    if (!websiteToEdit || !editedWebsite.name || !editedWebsite.domain) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/update-website`,
+        {
+          websiteId: websiteToEdit.id,
+          name: editedWebsite.name,
+          domain: editedWebsite.domain,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast({
+          title: "Thành công",
+          description: `Website "${editedWebsite.name}" đã được cập nhật.`,
+        });
+        // Cập nhật danh sách website
+        fetchWebsites();
+      } else {
+        toast({
+          title: "Lỗi",
+          description: response.data.message || "Không thể cập nhật website.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      if (handleTokenExpired(err)) {
+        return;
+      }
+      console.error("Lỗi cập nhật website:", err);
+      toast({
+        title: "Lỗi kết nối",
+        description: "Lỗi server khi cập nhật website.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsEditDialogOpen(false);
+      setWebsiteToEdit(null);
+    }
   };
 
   const handleDeleteWebsite = async () => {
@@ -319,8 +391,53 @@ export default function Dashboard() {
     );
   }
 
-  return (
-    <div className="space-y-6">
+	  return (
+	    <div className="space-y-6">
+	      {/* Dialog sửa website */}
+	      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+	        <DialogContent className="sm:max-w-[425px]">
+	          <DialogHeader>
+	            <DialogTitle>Sửa thông tin Website</DialogTitle>
+	            <DialogDescription>
+	              Chỉnh sửa tên và domain của website. Nhấn lưu khi hoàn tất.
+	            </DialogDescription>
+	          </DialogHeader>
+	          <div className="grid gap-4 py-4">
+	            <div className="grid grid-cols-4 items-center gap-4">
+	              <Label htmlFor="name" className="text-right">
+	                Tên Website
+	              </Label>
+	              <Input
+	                id="name"
+	                value={editedWebsite.name}
+	                onChange={(e) =>
+	                  setEditedWebsite({ ...editedWebsite, name: e.target.value })
+	                }
+	                className="col-span-3"
+	              />
+	            </div>
+	            <div className="grid grid-cols-4 items-center gap-4">
+	              <Label htmlFor="domain" className="text-right">
+	                Domain
+	              </Label>
+	              <Input
+	                id="domain"
+	                value={editedWebsite.domain}
+	                onChange={(e) =>
+	                  setEditedWebsite({ ...editedWebsite, domain: e.target.value })
+	                }
+	                className="col-span-3"
+	              />
+	            </div>
+	          </div>
+	          <DialogFooter>
+	            <Button type="submit" onClick={handleEditWebsite}>
+	              Lưu thay đổi
+	            </Button>
+	          </DialogFooter>
+	        </DialogContent>
+	      </Dialog>
+	      {/* Kết thúc Dialog sửa website */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tổng quan</h1>
@@ -366,6 +483,19 @@ export default function Dashboard() {
                     {selectedConfigId === website.config_id && (
                       <Check className="h-4 w-4 text-primary mr-2" />
                     )}
+                    {/* Icon sửa */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-blue-500 hover:bg-blue-100"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Ngăn chặn việc chọn website khi click nút sửa
+                        handleEditClick(website);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    {/* Icon xóa */}
                     <Button
                       variant="ghost"
                       size="icon"

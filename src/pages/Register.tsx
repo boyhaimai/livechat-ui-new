@@ -82,7 +82,7 @@ export default function Register() {
           description: "Tài khoản của bạn đã được tạo!",
         });
         // Chuyển hướng đến /add_website như trong Register_admin.js
-        setTimeout(() => navigate("/add_website"), 1000);
+        setTimeout(() => navigate("/"), 1000);
       } else {
         setServerError(response.data.message || "Đăng ký thất bại.");
         toast({
